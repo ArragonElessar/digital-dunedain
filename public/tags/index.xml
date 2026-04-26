@@ -2,66 +2,66 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on the-digital-dunedain</title>
-    <link>http://localhost:1313/tags/</link>
+    <link>http://localhost:1313/digital-dunedain/tags/</link>
     <description>Recent content in Tags on the-digital-dunedain</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 21 Apr 2026 10:00:00 -0500</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/digital-dunedain/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>BLE</title>
-      <link>http://localhost:1313/tags/ble/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/ble/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/ble/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/ble/</guid>
       <description></description>
     </item>
     <item>
       <title>C</title>
-      <link>http://localhost:1313/tags/c/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/c/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/c/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/c/</guid>
       <description></description>
     </item>
     <item>
       <title>Embedded</title>
-      <link>http://localhost:1313/tags/embedded/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/embedded/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/embedded/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/embedded/</guid>
       <description></description>
     </item>
     <item>
       <title>IMU</title>
-      <link>http://localhost:1313/tags/imu/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/imu/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/imu/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/imu/</guid>
       <description></description>
     </item>
     <item>
       <title>IoT</title>
-      <link>http://localhost:1313/tags/iot/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/iot/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/iot/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/iot/</guid>
       <description></description>
     </item>
     <item>
       <title>RTOS</title>
-      <link>http://localhost:1313/tags/rtos/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/rtos/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/rtos/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/rtos/</guid>
       <description></description>
     </item>
     <item>
       <title>Sensors</title>
-      <link>http://localhost:1313/tags/sensors/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/sensors/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/sensors/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/sensors/</guid>
       <description></description>
     </item>
     <item>
       <title>Zephyr</title>
-      <link>http://localhost:1313/tags/zephyr/</link>
+      <link>http://localhost:1313/digital-dunedain/tags/zephyr/</link>
       <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
-      <guid>http://localhost:1313/tags/zephyr/</guid>
+      <guid>http://localhost:1313/digital-dunedain/tags/zephyr/</guid>
       <description></description>
     </item>
   </channel>

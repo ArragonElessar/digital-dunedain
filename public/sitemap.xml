@@ -2,49 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/posts/first-technical-post/</loc>
-    <lastmod>2026-04-26T18:00:00+05:30</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-04-26T18:00:00+05:30</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/</loc>
-    <lastmod>2026-04-26T18:00:00+05:30</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/ble/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/ble/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/zephyr-imu-ble-broadcaster/</loc>
+    <loc>http://localhost:1313/digital-dunedain/posts/zephyr-imu-ble-broadcaster/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/c/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/c/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>http://localhost:1313/digital-dunedain/categories/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/embedded/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/embedded/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/embedded-systems/</loc>
+    <loc>http://localhost:1313/digital-dunedain/categories/embedded-systems/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/imu/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/imu/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/iot/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/iot/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/rtos/</loc>
+    <loc>http://localhost:1313/digital-dunedain/posts/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/sensors/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/rtos/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/sensors/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/zephyr/</loc>
+    <loc>http://localhost:1313/digital-dunedain/tags/</loc>
+    <lastmod>2026-04-21T10:00:00-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/digital-dunedain/</loc>
+    <lastmod>2026-04-21T10:00:00-05:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/digital-dunedain/tags/zephyr/</loc>
     <lastmod>2026-04-21T10:00:00-05:00</lastmod>
   </url>
 </urlset>
