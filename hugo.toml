@@ -1,0 +1,7 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'the-digital-dunedain'
+theme = 'PaperMod'
+[[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/ArragonElessar"

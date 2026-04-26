@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Building a Real-Time IMU Data Broadcaster with Zephyr RTOS and BLE | the-digital-dunedain</title>
+<meta name="keywords" content="Zephyr, RTOS, BLE, IoT, Embedded, C, Sensors, IMU">
+<meta name="description" content="In the world of IoT and connected devices, streaming real-time sensor data efficiently is a common challenge. How do you get motion data from a device to a nearby smartphone or gateway without the overhead of a full connection? This project provides a practical answer by building an Inertial Measurement Unit (IMU) data broadcaster using the powerful Zephyr RTOS and Bluetooth Low Energy (BLE).
+We&rsquo;ll take a deep dive into a project that reads accelerometer and gyroscope data from an LSM6DSO sensor and broadcasts it wirelessly in BLE advertising packets. This allows any BLE-capable device in the vicinity to listen in on the data stream, no connection required!">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/zephyr-imu-ble-broadcaster/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.1e1ce6e5fbf23413d890ca49209896e89f0e86c6b9103f1609f6a818635a4447.css" integrity="sha256-Hhzm5fvyNBPYkMpJIJiW6J8Ohsa5ED8WCfaoGGNaREc=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/zephyr-imu-ble-broadcaster/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="the-digital-dunedain (Alt + H)">the-digital-dunedain</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Building a Real-Time IMU Data Broadcaster with Zephyr RTOS and BLE
+    </h1>
+    <div class="post-meta"><span title='2026-04-21 10:00:00 -0500 -0500'>April 21, 2026</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><p>In the world of IoT and connected devices, streaming real-time sensor data efficiently is a common challenge. How do you get motion data from a device to a nearby smartphone or gateway without the overhead of a full connection? This project provides a practical answer by building an Inertial Measurement Unit (IMU) data broadcaster using the powerful <a href="https://www.zephyrproject.org/">Zephyr RTOS</a> and Bluetooth Low Energy (BLE).</p>
+<p>We&rsquo;ll take a deep dive into a project that reads accelerometer and gyroscope data from an LSM6DSO sensor and broadcasts it wirelessly in BLE advertising packets. This allows any BLE-capable device in the vicinity to listen in on the data stream, no connection required!</p>
+<h2 id="the-system-architecture-a-birds-eye-view">The System Architecture: A Bird&rsquo;s-Eye View<a hidden class="anchor" aria-hidden="true" href="#the-system-architecture-a-birds-eye-view">#</a></h2>
+<p>Before we get into the code, let&rsquo;s understand the main components and how they interact:</p>
+<ol>
+<li><strong>The Sensor (LSM6DSO IMU)</strong>: This is our data source. An IMU like the <a href="https://www.st.com/en/mems-and-sensors/lsm6dso.html">LSM6DSO from STMicroelectronics</a> combines an accelerometer and a gyroscope to measure both linear acceleration and angular velocity across three axes.</li>
+<li><strong>The Communication Bus (I²C)</strong>: This is the electrical pathway between our microcontroller and the IMU. <a href="https://learn.sparkfun.com/tutorials/i2c/all">I²C (Inter-Integrated Circuit)</a> is a popular two-wire serial protocol perfect for connecting peripherals like sensors to a processor.</li>
+<li><strong>The Brain (Microcontroller running Zephyr RTOS)</strong>: The MCU orchestrates everything. It runs the Zephyr RTOS, which provides the necessary drivers (I²C, BLE) and kernel features (timing, scheduling) to make our application robust and reliable.</li>
+<li><strong>The Wireless Link (Bluetooth Low Energy)</strong>: We use BLE not in its typical connected mode, but as a simple broadcaster. The MCU packages the sensor data into custom advertising packets and sends them out periodically.</li>
+<li><strong>The Listener (Any BLE Scanner)</strong>: A smartphone, laptop, or another microcontroller can scan for these advertising packets, parse the data, and use it for applications like motion tracking, orientation visualization, or gesture recognition.</li>
+</ol>
+<p><img alt="System Diagram" loading="lazy" src="https://i.imgur.com/your-diagram-link.png"> </p>
+<h2 id="software-deep-dive-inside-the-zephyr-application">Software Deep Dive: Inside the Zephyr Application<a hidden class="anchor" aria-hidden="true" href="#software-deep-dive-inside-the-zephyr-application">#</a></h2>
+<p>The magic happens in the software. Zephyr&rsquo;s structured environment helps us separate hardware configuration from application logic.
+<a href="https://github.com/ArragonElessar/nrf54l15_imu_ble">Github Link</a></p>
+<h3 id="1-describing-the-hardware-the-device-tree">1. Describing the Hardware: The Device Tree<a hidden class="anchor" aria-hidden="true" href="#1-describing-the-hardware-the-device-tree">#</a></h3>
+<p>Zephyr uses the <a href="https://docs.zephyrproject.org/latest/build/dts/index.html">Device Tree</a> to describe the hardware layout of a board in a source file (<code>.dts</code> or <code>.overlay</code>). This abstracts the hardware, making our application code more portable.</p>
+<p>Our code needs to know which I²C bus the sensor is on. We use a nodelabel, <code>i2c30</code>, to get a device pointer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// From src/main.c
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> device <span style="color:#f92672">*</span>i2c_dev <span style="color:#f92672">=</span> <span style="color:#a6e22e">DEVICE_DT_GET</span>(<span style="color:#a6e22e">DT_NODELABEL</span>(i2c30));
+</span></span></code></pre></div><p>For a board like the <code>nrf52840dk_nrf52840</code>, you would create an <code>nrf52840dk_nrf52840.overlay</code> file to define this:</p>
+<pre tabindex="0"><code class="language-devicetree" data-lang="devicetree">/* Example .overlay file */
+&amp;i2c0 {
+    status = &#34;okay&#34;;
+    sda-pin = &lt;26&gt;;
+    scl-pin = &lt;27&gt;;
+
+    lsm6dso@6a {
+        compatible = &#34;st,lsm6dso&#34;;
+        reg = &lt;0x6a&gt;;
+        label = &#34;LSM6DSO&#34;;
+    };
+};
+
+/* We create a nodelabel for our code to find i2c0 */
+/ {
+    aliases {
+        i2c30 = &amp;i2c0;
+    };
+};
+</code></pre><h3 id="2-the-sensor-driver-lsm6dsoc">2. The Sensor Driver (<code>lsm6dso.c</code>)<a hidden class="anchor" aria-hidden="true" href="#2-the-sensor-driver-lsm6dsoc">#</a></h3>
+<p>This file contains the low-level functions for interacting with the IMU.</p>
+<h4 id="initialization-lsm6dso_setup">Initialization (<code>lsm6dso_setup</code>)<a hidden class="anchor" aria-hidden="true" href="#initialization-lsm6dso_setup">#</a></h4>
+<p>The setup function configures the sensor for our needs.</p>
+<ol>
+<li><strong>Sanity Check</strong>: It first reads the <code>WHO_AM_I</code> register. This is a fixed-value register on the sensor. If the value read back matches the expected value (<code>0x6A</code>), we can be confident our I²C communication is working.</li>
+<li><strong>Configure Accelerometer</strong>: We write to <code>REG_CTRL1_XL</code> to set the accelerometer&rsquo;s Output Data Rate (ODR) and full-scale range. In this project, we set it to 104 Hz and ±2g. This means it will produce 104 new readings per second, and the data will represent acceleration values up to twice the force of gravity.</li>
+<li><strong>Configure Gyroscope</strong>: Similarly, we write to <code>REG_CTRL2_G</code> to set the gyroscope&rsquo;s ODR to 104 Hz and its full-scale range to ±250 degrees per second (dps).</li>
+</ol>
+<h4 id="data-fetching-lsm6dso_fetch_raw_data">Data Fetching (<code>lsm6dso_fetch_raw_data</code>)<a hidden class="anchor" aria-hidden="true" href="#data-fetching-lsm6dso_fetch_raw_data">#</a></h4>
+<p>This function reads 12 consecutive bytes from the sensor starting from the gyroscope output registers. This is called a &ldquo;burst read&rdquo; and is much more efficient than reading each of the 12 bytes individually.</p>
+<p>The data is &ldquo;raw&rdquo; because it&rsquo;s in the form of 16-bit signed integers (from -32768 to 32767). This raw data needs to be converted into meaningful physical units.</p>
+<h4 id="data-conversion-print_lsm6dso_data">Data Conversion (<code>print_lsm6dso_data</code>)<a hidden class="anchor" aria-hidden="true" href="#data-conversion-print_lsm6dso_data">#</a></h4>
+<p>To convert the raw integer values into g&rsquo;s (for acceleration) and dps (for angular velocity), we use a sensitivity factor provided by the sensor&rsquo;s datasheet.</p>
+<ul>
+<li><code>Accel_g = raw_accel * LSM6DSO_ACCEL_SENSITIVITY_2G</code></li>
+<li><code>Gyro_dps = raw_gyro * LSM6DSO_GYRO_SENSITIVITY_250DPS</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// From lsm6dso.h
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#define LSM6DSO_ACCEL_SENSITIVITY_2G    0.000598f </span><span style="color:#75715e">// mg / LSB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#define LSM6DSO_GYRO_SENSITIVITY_250DPS 0.00762f  </span><span style="color:#75715e">// dps / LSB
+</span></span></span></code></pre></div><blockquote>
+<p><strong>Note:</strong> The accelerometer sensitivity is often given in <strong>mg/LSB</strong> (milli-g per Least Significant Bit). Our code converts it to <strong>g/LSB</strong> for the final calculation.</p></blockquote>
+<h3 id="3-the-ble-broadcaster-mainc">3. The BLE Broadcaster (<code>main.c</code>)<a hidden class="anchor" aria-hidden="true" href="#3-the-ble-broadcaster-mainc">#</a></h3>
+<p>This is the heart of our application, bringing the sensor data to the wireless world.</p>
+<h4 id="broadcasting-vs-connecting">Broadcasting vs. Connecting<a hidden class="anchor" aria-hidden="true" href="#broadcasting-vs-connecting">#</a></h4>
+<p>BLE has two primary ways of communicating:</p>
+<ul>
+<li><strong>Connected Mode</strong>: A Central (like a phone) establishes a persistent, two-way connection with a Peripheral (our device). This is great for complex interactions but has connection setup overhead and higher power consumption.</li>
+<li><strong>Broadcasting/Observing</strong>: A Broadcaster (our device) simply sends out data in small packets. An Observer (a scanner) can listen for these packets without any connection. This is extremely power-efficient and perfect for one-way data streaming.</li>
+</ul>
+<p>Our project uses the broadcasting model. For a great primer on BLE advertising, check out this article from Novel Bits.</p>
+<h4 id="crafting-the-advertising-packet">Crafting the Advertising Packet<a hidden class="anchor" aria-hidden="true" href="#crafting-the-advertising-packet">#</a></h4>
+<p>The content of our broadcast is defined in an array of <code>bt_data</code> structs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// From src/main.c
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> bt_data ad[] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">BT_DATA</span>(BT_DATA_FLAGS, BT_LE_AD_GENERAL <span style="color:#f92672">|</span> BT_LE_AD_NO_BREDR, <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">uint8_t</span>)),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">BT_DATA</span>(BT_DATA_NAME_COMPLETE, <span style="color:#e6db74">&#34;IMU&#34;</span>, <span style="color:#ae81ff">3</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">BT_DATA</span>(BT_DATA_MANUFACTURER_DATA, ble_data, <span style="color:#66d9ef">sizeof</span>(ble_data))
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Let&rsquo;s break this down:</p>
+<ol>
+<li><strong>Flags</strong>: <code>BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR</code> tells scanners that this is a general discoverable device and it does not support Basic Rate/Enhanced Data Rate (i.e., it&rsquo;s BLE-only).</li>
+<li><strong>Complete Name</strong>: We give our device the friendly name &ldquo;IMU&rdquo;.</li>
+<li><strong>Manufacturer Specific Data</strong>: This is where we put our custom payload! It&rsquo;s a flexible field for vendors to put whatever they want. We define a payload structure:
+<ul>
+<li><strong>Company ID (2 bytes)</strong>: We use a custom ID <code>0xABFF</code>. A real product would use an officially assigned ID.</li>
+<li><strong>Sensor Data (12 bytes)</strong>: The raw, packed <code>lsm6dso_data</code> struct containing 6 <code>int16_t</code> values (3 for accel, 3 for gyro).</li>
+</ul>
+</li>
+</ol>
+<h4 id="the-main-loop-orchestrating-the-flow">The Main Loop: Orchestrating the Flow<a hidden class="anchor" aria-hidden="true" href="#the-main-loop-orchestrating-the-flow">#</a></h4>
+<p>The <code>main</code> function&rsquo;s <code>while(1)</code> loop is the engine that drives the application.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 1. Get the start time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    start_time_ms <span style="color:#f92672">=</span> <span style="color:#a6e22e">k_uptime_get</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 2. Fetch raw data from the sensor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lsm6dso_fetch_raw_data</span>(i2c_dev, <span style="color:#f92672">&amp;</span>data);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 3. Print human-readable data to the console
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">print_lsm6dso_data</span>(<span style="color:#f92672">&amp;</span>data);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 4. Prepare the BLE payload
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    ble_data <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xff</span>; <span style="color:#75715e">// Company ID LSB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    ble_data <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xAB</span>; <span style="color:#75715e">// Company ID MSB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">memcpy</span>(<span style="color:#f92672">&amp;</span>ble_data, <span style="color:#f92672">&amp;</span>data, <span style="color:#66d9ef">sizeof</span>(data));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 5. Update the advertising data for the next broadcast
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">bt_le_adv_update_data</span>(ad, <span style="color:#a6e22e">ARRAY_SIZE</span>(ad), NULL, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 6. Calculate sleep time to maintain a constant sampling rate
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    processing_time_ms <span style="color:#f92672">=</span> <span style="color:#a6e22e">k_uptime_get</span>() <span style="color:#f92672">-</span> start_time_ms;
+</span></span><span style="display:flex;"><span>    sleep_time_ms <span style="color:#f92672">=</span> SAMPLING_INTERVAL_MS <span style="color:#f92672">-</span> processing_time_ms;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">k_msleep</span>(sleep_time_ms);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The timing logic at the end is crucial for a real-time system. It ensures that we sample at a consistent rate (2 Hz in this case) by accounting for the time it took to fetch, print, and process the data in each loop iteration.</p>
+<h3 id="4-receiving-the-data-a-simple-python-listener">4. Receiving the Data: A Simple Python Listener<a hidden class="anchor" aria-hidden="true" href="#4-receiving-the-data-a-simple-python-listener">#</a></h3>
+<p>On the other end, we can use a simple Python script with the excellent Bleak library to receive and parse the data.</p>
+<p>The script scans for a device named &ldquo;IMU&rdquo;. When it finds it, it extracts the manufacturer data. The key is using <code>struct.unpack</code> with the correct format string (<code>'&lt;hhhhhh'</code>) to convert the 12 bytes of payload back into six 16-bit signed integers.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># From LinuxBLE/main.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> struct
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> bleak <span style="color:#f92672">import</span> BleakScanner
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">detection_callback</span>(device, advertisement_data):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> device<span style="color:#f92672">.</span>name <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;IMU&#34;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># The key is advertisement_data.manufacturer_data</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> company_id, payload <span style="color:#f92672">in</span> advertisement_data<span style="color:#f92672">.</span>manufacturer_data<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># &#39;&lt;&#39; for little-endian, &#39;h&#39; for signed short (16-bit)</span>
+</span></span><span style="display:flex;"><span>            data <span style="color:#f92672">=</span> struct<span style="color:#f92672">.</span>unpack(<span style="color:#e6db74">&#39;&lt;hhhhhh&#39;</span>, payload)
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Acc: X=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74"> Y=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74"> Z=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Gyro: X=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74"> Y=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74"> Z=</span><span style="color:#e6db74">{</span>data<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... main async loop ...</span>
+</span></span></code></pre></div><h2 id="github"><a href="https://github.com/ArragonElessar/nrf54l15_imu_ble/tree/main">Github</a><a hidden class="anchor" aria-hidden="true" href="#github">#</a></h2>
+<h2 id="conclusion-and-next-steps">Conclusion and Next Steps<a hidden class="anchor" aria-hidden="true" href="#conclusion-and-next-steps">#</a></h2>
+<p>This project serves as a robust template for building simple, efficient, one-way sensor data streams with Zephyr and BLE. By leveraging manufacturer data in advertising packets, we avoid the complexity and power cost of a full BLE connection, making it ideal for many IoT applications.</p>
+<p>From here, you could explore several exciting enhancements:</p>
+<ul>
+<li><strong>Use a Custom BLE Service</strong>: For more complex scenarios, you could move from advertising data to a full GATT service with custom characteristics for accelerometer and gyroscope data. This would require a BLE connection but allows for two-way communication and more structured data access.</li>
+<li><strong>Implement Sensor Fusion</strong>: The raw accelerometer and gyroscope data are useful, but their real power comes from combining them. You could implement a sensor fusion algorithm (like Madgwick or Mahony) on the device to calculate its absolute orientation (roll, pitch, yaw) and broadcast that instead.</li>
+<li><strong>Power Management</strong>: Zephyr offers extensive power management features. You could put the device into a deep sleep state between sensor reads and broadcasts to dramatically extend battery life.</li>
+<li><strong>Data Visualization</strong>: On the receiving end, you could build a simple web or desktop application to visualize the incoming data in real-time, creating a virtual 3D model that mimics the physical device&rsquo;s orientation.</li>
+</ul>
+<p>Happy hacking!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/zephyr/">Zephyr</a></li>
+      <li><a href="http://localhost:1313/tags/rtos/">RTOS</a></li>
+      <li><a href="http://localhost:1313/tags/ble/">BLE</a></li>
+      <li><a href="http://localhost:1313/tags/iot/">IoT</a></li>
+      <li><a href="http://localhost:1313/tags/embedded/">Embedded</a></li>
+      <li><a href="http://localhost:1313/tags/c/">C</a></li>
+      <li><a href="http://localhost:1313/tags/sensors/">Sensors</a></li>
+      <li><a href="http://localhost:1313/tags/imu/">IMU</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">the-digital-dunedain</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

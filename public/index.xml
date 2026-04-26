@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>the-digital-dunedain</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content on the-digital-dunedain</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Apr 2026 18:00:00 +0530</lastBuildDate>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My First Technical Post</title>
+      <link>http://localhost:1313/posts/first-technical-post/</link>
+      <pubDate>Sun, 26 Apr 2026 18:00:00 +0530</pubDate>
+      <guid>http://localhost:1313/posts/first-technical-post/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This is my first technical blog post using Hugo.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hello_world&lt;/span&gt;():
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello, Hugo!&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <title>Building a Real-Time IMU Data Broadcaster with Zephyr RTOS and BLE</title>
+      <link>http://localhost:1313/posts/zephyr-imu-ble-broadcaster/</link>
+      <pubDate>Tue, 21 Apr 2026 10:00:00 -0500</pubDate>
+      <guid>http://localhost:1313/posts/zephyr-imu-ble-broadcaster/</guid>
+      <description>&lt;p&gt;In the world of IoT and connected devices, streaming real-time sensor data efficiently is a common challenge. How do you get motion data from a device to a nearby smartphone or gateway without the overhead of a full connection? This project provides a practical answer by building an Inertial Measurement Unit (IMU) data broadcaster using the powerful &lt;a href=&#34;https://www.zephyrproject.org/&#34;&gt;Zephyr RTOS&lt;/a&gt; and Bluetooth Low Energy (BLE).&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ll take a deep dive into a project that reads accelerometer and gyroscope data from an LSM6DSO sensor and broadcasts it wirelessly in BLE advertising packets. This allows any BLE-capable device in the vicinity to listen in on the data stream, no connection required!&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
