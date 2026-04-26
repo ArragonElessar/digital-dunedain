@@ -25,7 +25,7 @@ Before we get into the code, let's understand the main components and how they i
 ## Software Deep Dive: Inside the Zephyr Application
 
 The magic happens in the software. Zephyr's structured environment helps us separate hardware configuration from application logic.
-[Github Link](https://github.com/ArragonElessar/nrf54l15_imu_ble)
+### [Github Link](https://github.com/ArragonElessar/nrf54l15_imu_ble)
 
 ### 1. Describing the Hardware: The Device Tree
 
@@ -182,7 +182,6 @@ async def detection_callback(device, advertisement_data):
 
 # ... main async loop ...
 ```
-## [Github](https://github.com/ArragonElessar/nrf54l15_imu_ble/tree/main)
 
 ## Conclusion and Next Steps
 
